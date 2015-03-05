@@ -1,0 +1,22 @@
+html, body {
+    height: calc(100% - 11px);
+    margin: 0 auto;
+}
+
+body {
+    background-color: slategray;
+}
+
+.repeatedData {
+    height: calc(100% - 4px);
+    width: 100px;
+    overflow: auto;
+    float: left;
+
+}
+
+.player {
+    width: calc(100% - 100px);
+    float: left;
+
+}

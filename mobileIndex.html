@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html ng-app="sounder">
+<head>
+    <title>SoundCloud API</title>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body ng-controller="mainController">
+
+<form>
+    <input type="text" ng-model="searchText"/>
+    <button ng-click="getUser()">submit</button>
+</form>
+<div class="repeatedData">
+    <div ng-repeat="song in userData">
+        <img class="icons" ng-src="{{song.artwork_url}}" ng-click="play(song.permalink_url)" ng-if="song.artwork_url">
+    </div>
+</div>
+<div class="player" ng-bind-html="player_html"></div>
+
+<!-------------------- script to view in mobile--------------------------->
+<style>
+    html, body {
+        height: calc(100% - 11px);
+        margin: 0 auto;
+    }
+
+    body {
+        background-color: slategray;
+    }
+
+    .repeatedData {
+        height: calc(100% - 4px);
+        width: 100px;
+        overflow: auto;
+        float: left;
+
+    }
+
+    .player {
+        width: calc(100% - 100px);
+        float: left;
+    }
+</style>
+
+
+
+
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="http://connect.soundcloud.com/sdk.js"></script>
+
+<script>
+    var app = angular.module('sounder', []);
+
+    //        app.service('soundService', function($http) {
+    //
+    //            getUser = function(username) {
+    //                return $http({
+    //                    method: 'GET',
+    //                    url: 'http://api.soundcloud.com/users/' + username + '/tracks.json?client_id=bda4ada8694db06efcac9cf97b872b3e'
+    //
+    //                    // Main URL: http://api.soundcloud.com/
+    //                    // Where we want to go: users/' + username + '/tracks.json
+    //                    // API Key: ?client_id=bda4ada8694db06efcac9cf97b872b3e
+    //
+    //
+    //                })
+    //            };
+    //
+    //
+    //        });
+
+    app.controller('mainController', function($scope, $sce, $http) {
+//    $scope.test = 'IT WORKS';
+        var getUser = function(username) {
+            return $http({
+                method: 'GET',
+                url: 'http://api.soundcloud.com/users/' + username + '/tracks.json?client_id=bda4ada8694db06efcac9cf97b872b3e'
+
+                // Main URL: http://api.soundcloud.com/
+                // Where we want to go: users/' + username + '/tracks.json
+                // API Key: ?client_id=bda4ada8694db06efcac9cf97b872b3e
+
+
+            })
+        };
+
+        $scope.getUser = function() {
+            getUser($scope.searchText).then(function(data){
+                $scope.userData = data.data;
+            })
+        };
+        $scope.getUser();
+        console.log($scope.userData);
+        $scope.play = function(track_url) {
+            SC.oEmbed(track_url, { auto_play: true }, function(oEmbed) {
+                $scope.$apply($scope.player_html = $sce.trustAsHtml(oEmbed.html));
+            });
+        }
+    });
+
+</script>
+
+<!---------------------------------------------------------------->
+<!--<script src="app.js"></script>-->
+<!--<script src="mainController.js"></script>-->
+<!--<script src="soundService.js"></script>-->
+</body>
+</html>
